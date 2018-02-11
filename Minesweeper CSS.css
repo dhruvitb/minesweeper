@@ -1,0 +1,31 @@
+body {
+    background-color: black;
+}
+
+#welcome {
+    text-align: center;
+    color: white;
+}
+
+#statusBar {
+    width: 500px;
+    height: 50px;
+    background-color: #8d9db6;
+    margin: auto;
+}
+
+#gamebox {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto;
+    width: 500px;
+    height: 500px;
+    background-color: lightgray;
+    margin: auto;
+}
+
+.box {
+    width: 48px;
+    height: 48px;
+    border: darkblue solid 1px;
+    background-color: #667292;
+}
