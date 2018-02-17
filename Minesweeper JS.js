@@ -1,6 +1,8 @@
 
 var gridSize = 10;
 var tiles = [];
+var revealedTiles = 0;
+var playing = true;
 
 function Tile() {
     this.mined = false;
@@ -26,6 +28,27 @@ function reveal(boxNumber, adjMines) {
     $("#" + boxNumber).css("background-color", "lightgray");
     tiles[boxNumber].revealed = true;
     $("#" + boxNumber).text(adjMines);
+    ++revealedTiles;
+    if ((gridSize * gridSize) - revealedTiles == bombCount) {
+        playing = false;
+        $("#welcome").text("Congratulations you won!");
+        $("#gamebox").fadeOut();
+        $("#statusBar").fadeOut();
+    }
+}
+
+function revealBombs() {
+    var size = gridSize * gridSize;
+    for (var i = 0; i < size; ++i) {
+        if (tiles[i].mined && !tiles[i].revealed) {
+            if (tiles[i].flagged) {
+                $("#flag" + i).hide();
+            }
+            $("#" + i).css("background-color", "lightgray");
+            $("<img src=\"bomb.png\"/>").appendTo("#" + i);
+            tiles[i].revealed = true;
+        }
+    }
 }
 
 function findAdjMines(boxNumber) {
@@ -67,24 +90,30 @@ function adjReveal(boxNumber) {
     }
 }
 
-// calls the reveal function on a clicked box
+// when you click a box
 $(".box").mousedown(function (event) {
     var boxNumber = parseInt($(this).attr("id"));
     var currBox = tiles[boxNumber];
-    if (!currBox.flagged) {
-        if (currBox.mined && !currBox.revealed && event.which == 1) { // if mined and not revealed and clicked on
-            $("#welcome").text("You clicked on a bomb! You lose!");
-            $("#" + boxNumber).css("background-color", "lightgray");
-            $("<img src=\"bomb.png\"/>").appendTo("#" + boxNumber);
-            currBox.revealed = true;
-        } else if (!currBox.revealed && event.which == 3) { // if not revealed and right clicked
-            $("<img id=\"flag" + boxNumber + "\" src=\"flag.png\"/>").appendTo("#" + boxNumber);
-            currBox.flagged = true;
-        } else if (!currBox.revealed && event.which == 1) { // if not revealed and left clicked
-            findAdjMines(boxNumber);
+    if (playing) {
+        if (!currBox.flagged) {
+            if (currBox.mined && !currBox.revealed && event.which == 1) { // if mined and not revealed
+                playing = false;
+                $("#welcome").text("You clicked on a bomb! You lose!");
+                $("#" + boxNumber).css("background-color", "lightgray");
+                $("<img src=\"bomb.png\"/>").appendTo("#" + boxNumber);
+                currBox.revealed = true;
+                revealBombs();
+                $("#statusBar").fadeOut(3000);
+                $("#gamebox").fadeOut(3000);
+            } else if (!currBox.revealed && event.which == 3) { // if not revealed and right clicked
+                $("<img id=\"flag" + boxNumber + "\" src=\"flag.png\"/>").appendTo("#" + boxNumber);
+                currBox.flagged = true;
+            } else if (!currBox.revealed && event.which == 1) { // if not revealed and left clicked
+                findAdjMines(boxNumber);
+            }
+        } else if (currBox.flagged && event.which == 3) {
+            $("#flag" + boxNumber).hide();
+            currBox.flagged = false;
         }
-    } else if (currBox.flagged && event.which == 3) {
-        $("#flag" + boxNumber).hide();
-        currBox.flagged = false;
     }
 });
