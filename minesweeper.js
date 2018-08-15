@@ -4,14 +4,17 @@ var tiles = [];
 var revealedTiles = 0;
 var playing = true;
 
-function Tile() {
-    this.mined = false;
-    this.revealed = false;
-    this.flagged = false;
+class Tile {
+    constructor() {
+        this.mined = false;
+        this.revealed = false;
+        this.flagged = false;
+    }
 }
 
 for (var i = 0; i < gridSize * gridSize; ++i) {
     tiles.push(new Tile);
+    $("<div id=" + i + " class=\"box\"></div>").appendTo("#gamebox");
 }
 
 var bombCount = 0;
