@@ -21,6 +21,7 @@ body {
     height: 500px;
     background-color: lightgray;
     margin: auto;
+    user-select: none;
 }
 
 .box {
